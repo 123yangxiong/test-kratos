@@ -59,22 +59,22 @@ func (s *server) SayHello(ctx context.Context, in *helloworld.HelloRequest) (*he
 
 func main() {
 	logPath := os.Getenv("LOG_PATH")
-	if logPath == "" {
-		logPath = "/logs/hello.log"
-	}
 
 	scEndPoint := os.Getenv("SC_ENDPOINT")
 	if scEndPoint == "" {
 		panic("sc endPoint is empty")
 	}
 
-	//logger := log.NewStdLogger(os.Stdout)
-	logFile, err := os.OpenFile(logPath, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0777)
-	if err != nil {
-		panic(err)
+	logger := log.NewStdLogger(os.Stdout)
+	if logPath != "" {
+		logFile, err := os.OpenFile(logPath, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0777)
+		if err != nil {
+			panic(err)
+		}
+		logger = log.NewStdLogger(logFile)
 	}
-	logger := log.NewStdLogger(logFile)
-	log := log.NewHelper(logger)
+
+	logg := log.NewHelper(logger)
 
 	c, err := sc.NewClient(sc.Options{
 		// EndPoints填写servicecomb中service center的地址
@@ -126,9 +126,9 @@ func main() {
 		kratos.Registrar(r),
 	)
 
-	log.Info("start server helloword")
+	logg.Info("start server helloword")
 
 	if err := app.Run(); err != nil {
-		log.Fatal(err)
+		logg.Fatal(err)
 	}
 }

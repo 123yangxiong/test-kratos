@@ -6,6 +6,7 @@ import (
 	"github.com/go-chassis/sc-client"
 	"github.com/go-kratos/kratos/contrib/registry/servicecomb/v2"
 	"log"
+	"os"
 	"time"
 
 	"github.com/go-kratos/examples/helloworld/helloworld"
@@ -15,10 +16,14 @@ import (
 )
 
 func main() {
+	scEndPoint := os.Getenv("SC_ENDPOINT")
+	if scEndPoint == "" {
+		panic("sc endPoint is empty")
+	}
 
 	c, err := sc.NewClient(sc.Options{
 		// EndPoints填写servicecomb中service center的地址
-		Endpoints: []string{"139.9.248.107:30100"},
+		Endpoints: []string{"scEndPoint"},
 		EnableSSL: true,
 		TLSConfig: &tls.Config{
 			InsecureSkipVerify: true,
